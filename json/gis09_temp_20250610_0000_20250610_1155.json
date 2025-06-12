@@ -1,0 +1,1452 @@
+[
+  {
+    "coordinates": [
+      126.62860949,
+      34.15931904
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:00:00.000Z",
+    "value": 18.993
+  },
+  {
+    "coordinates": [
+      126.62940957,
+      34.15928583
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:05:00.000Z",
+    "value": 19.117
+  },
+  {
+    "coordinates": [
+      126.6288176,
+      34.15890663
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:10:00.000Z",
+    "value": 18.599
+  },
+  {
+    "coordinates": [
+      126.62866179,
+      34.15897466
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:15:00.000Z",
+    "value": 18.065
+  },
+  {
+    "coordinates": [
+      126.62830562,
+      34.15855741
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:20:00.000Z",
+    "value": 18.055
+  },
+  {
+    "coordinates": [
+      126.62829892,
+      34.15920986
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:25:00.000Z",
+    "value": 18.713
+  },
+  {
+    "coordinates": [
+      126.62914145,
+      34.15934402
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:30:00.000Z",
+    "value": 18.671
+  },
+  {
+    "coordinates": [
+      126.62775895,
+      34.15986743
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:35:00.000Z",
+    "value": 17.663
+  },
+  {
+    "coordinates": [
+      126.62896073,
+      34.15870651
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:40:00.000Z",
+    "value": 17.822
+  },
+  {
+    "coordinates": [
+      126.62878572,
+      34.15900379
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:45:00.000Z",
+    "value": 18.41
+  },
+  {
+    "coordinates": [
+      126.62873018,
+      34.15927478
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:50:00.000Z",
+    "value": 17.47
+  },
+  {
+    "coordinates": [
+      126.62895043,
+      34.15950896
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T00:55:00.000Z",
+    "value": 17.574
+  },
+  {
+    "coordinates": [
+      126.62867001,
+      34.15845719
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:00:00.000Z",
+    "value": 17.314
+  },
+  {
+    "coordinates": [
+      126.62870745,
+      34.15860223
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:05:00.000Z",
+    "value": 17.866
+  },
+  {
+    "coordinates": [
+      126.62802735,
+      34.15939214
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:10:00.000Z",
+    "value": 17.294
+  },
+  {
+    "coordinates": [
+      126.62847454,
+      34.15983377
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:15:00.000Z",
+    "value": 17.356
+  },
+  {
+    "coordinates": [
+      126.62840029,
+      34.15914601
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:20:00.000Z",
+    "value": 17.485
+  },
+  {
+    "coordinates": [
+      126.62855641,
+      34.15868446
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:25:00.000Z",
+    "value": 17.043
+  },
+  {
+    "coordinates": [
+      126.62817368,
+      34.15931738
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:30:00.000Z",
+    "value": 17.237
+  },
+  {
+    "coordinates": [
+      126.62866594,
+      34.15938816
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:35:00.000Z",
+    "value": 17.531
+  },
+  {
+    "coordinates": [
+      126.62811008,
+      34.15928844
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:40:00.000Z",
+    "value": 17.559
+  },
+  {
+    "coordinates": [
+      126.62906755,
+      34.15993141
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:45:00.000Z",
+    "value": 17.6
+  },
+  {
+    "coordinates": [
+      126.62864491,
+      34.15935525
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:50:00.000Z",
+    "value": 17.566
+  },
+  {
+    "coordinates": [
+      126.62886458,
+      34.1589238
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T01:55:00.000Z",
+    "value": 17.268
+  },
+  {
+    "coordinates": [
+      126.62789239,
+      34.15986898
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:00:00.000Z",
+    "value": 17.915
+  },
+  {
+    "coordinates": [
+      126.62919666,
+      34.15992253
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:05:00.000Z",
+    "value": 17.679
+  },
+  {
+    "coordinates": [
+      126.62867461,
+      34.15928822
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:10:00.000Z",
+    "value": 17.252
+  },
+  {
+    "coordinates": [
+      126.62799835,
+      34.15891349
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:15:00.000Z",
+    "value": 17.202
+  },
+  {
+    "coordinates": [
+      126.62832401,
+      34.15861196
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:20:00.000Z",
+    "value": 18.188
+  },
+  {
+    "coordinates": [
+      126.62878604,
+      34.15956094
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:25:00.000Z",
+    "value": 17.536
+  },
+  {
+    "coordinates": [
+      126.62820526,
+      34.15883809
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:30:00.000Z",
+    "value": 17.988
+  },
+  {
+    "coordinates": [
+      126.62918576,
+      34.15917504
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:35:00.000Z",
+    "value": 18.419
+  },
+  {
+    "coordinates": [
+      126.6286799,
+      34.15982413
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:40:00.000Z",
+    "value": 18.212
+  },
+  {
+    "coordinates": [
+      126.62892624,
+      34.15984176
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:45:00.000Z",
+    "value": 18.4
+  },
+  {
+    "coordinates": [
+      126.62966237,
+      34.15947086
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:50:00.000Z",
+    "value": 18.279
+  },
+  {
+    "coordinates": [
+      126.62808243,
+      34.15982178
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T02:55:00.000Z",
+    "value": 18.21
+  },
+  {
+    "coordinates": [
+      126.62830196,
+      34.15943002
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:00:00.000Z",
+    "value": 18.918
+  },
+  {
+    "coordinates": [
+      126.6290938,
+      34.16006781
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:05:00.000Z",
+    "value": 18.221
+  },
+  {
+    "coordinates": [
+      126.62900153,
+      34.15879685
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:10:00.000Z",
+    "value": 19.053
+  },
+  {
+    "coordinates": [
+      126.62847332,
+      34.1586949
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:15:00.000Z",
+    "value": 18.611
+  },
+  {
+    "coordinates": [
+      126.62948451,
+      34.15935452
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:20:00.000Z",
+    "value": 19.23
+  },
+  {
+    "coordinates": [
+      126.62884334,
+      34.15885216
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:25:00.000Z",
+    "value": 18.978
+  },
+  {
+    "coordinates": [
+      126.62887926,
+      34.15898371
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:30:00.000Z",
+    "value": 19.239
+  },
+  {
+    "coordinates": [
+      126.62858727,
+      34.1593758
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:35:00.000Z",
+    "value": 18.633
+  },
+  {
+    "coordinates": [
+      126.62761713,
+      34.15905779
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:40:00.000Z",
+    "value": 18.951
+  },
+  {
+    "coordinates": [
+      126.62818842,
+      34.16009364
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:45:00.000Z",
+    "value": 19.552
+  },
+  {
+    "coordinates": [
+      126.62846379,
+      34.15929777
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:50:00.000Z",
+    "value": 18.907
+  },
+  {
+    "coordinates": [
+      126.62864541,
+      34.15919086
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T03:55:00.000Z",
+    "value": 19.385
+  },
+  {
+    "coordinates": [
+      126.6282872,
+      34.15947062
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:00:00.000Z",
+    "value": 19.501
+  },
+  {
+    "coordinates": [
+      126.62856146,
+      34.15928875
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:05:00.000Z",
+    "value": 19.011
+  },
+  {
+    "coordinates": [
+      126.62902193,
+      34.15927222
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:10:00.000Z",
+    "value": 19.143
+  },
+  {
+    "coordinates": [
+      126.6286175,
+      34.15935147
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:15:00.000Z",
+    "value": 19.812
+  },
+  {
+    "coordinates": [
+      126.62842373,
+      34.15947464
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:20:00.000Z",
+    "value": 18.996
+  },
+  {
+    "coordinates": [
+      126.62921834,
+      34.15887166
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:25:00.000Z",
+    "value": 19.515
+  },
+  {
+    "coordinates": [
+      126.62799565,
+      34.1596733
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:30:00.000Z",
+    "value": 18.958
+  },
+  {
+    "coordinates": [
+      126.62856384,
+      34.15906701
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:35:00.000Z",
+    "value": 19.828
+  },
+  {
+    "coordinates": [
+      126.62934114,
+      34.15973201
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:40:00.000Z",
+    "value": 19.557
+  },
+  {
+    "coordinates": [
+      126.62919491,
+      34.1590196
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:45:00.000Z",
+    "value": 19.101
+  },
+  {
+    "coordinates": [
+      126.62924162,
+      34.15909668
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:50:00.000Z",
+    "value": 18.903
+  },
+  {
+    "coordinates": [
+      126.62869321,
+      34.15938888
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T04:55:00.000Z",
+    "value": 19.391
+  },
+  {
+    "coordinates": [
+      126.62930459,
+      34.15972745
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:00:00.000Z",
+    "value": 18.612
+  },
+  {
+    "coordinates": [
+      126.62856095,
+      34.15957935
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:05:00.000Z",
+    "value": 18.75
+  },
+  {
+    "coordinates": [
+      126.628824,
+      34.15990246
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:10:00.000Z",
+    "value": 18.844
+  },
+  {
+    "coordinates": [
+      126.6281699,
+      34.15887085
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:15:00.000Z",
+    "value": 19.227
+  },
+  {
+    "coordinates": [
+      126.62839515,
+      34.15948322
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:20:00.000Z",
+    "value": 18.558
+  },
+  {
+    "coordinates": [
+      126.62880125,
+      34.15890051
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:25:00.000Z",
+    "value": 18.482
+  },
+  {
+    "coordinates": [
+      126.62865779,
+      34.15960702
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:30:00.000Z",
+    "value": 18.36
+  },
+  {
+    "coordinates": [
+      126.62842062,
+      34.15951184
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:35:00.000Z",
+    "value": 18.218
+  },
+  {
+    "coordinates": [
+      126.62820764,
+      34.15883572
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:40:00.000Z",
+    "value": 18.04
+  },
+  {
+    "coordinates": [
+      126.62864919,
+      34.15931415
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:45:00.000Z",
+    "value": 18.706
+  },
+  {
+    "coordinates": [
+      126.62909476,
+      34.15944185
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:50:00.000Z",
+    "value": 17.713
+  },
+  {
+    "coordinates": [
+      126.62893587,
+      34.16015369
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T05:55:00.000Z",
+    "value": 17.588
+  },
+  {
+    "coordinates": [
+      126.62831498,
+      34.15869656
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:00:00.000Z",
+    "value": 17.953
+  },
+  {
+    "coordinates": [
+      126.62817885,
+      34.15887021
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:05:00.000Z",
+    "value": 17.689
+  },
+  {
+    "coordinates": [
+      126.62859841,
+      34.15933752
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:10:00.000Z",
+    "value": 17.934
+  },
+  {
+    "coordinates": [
+      126.6295178,
+      34.15960333
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:15:00.000Z",
+    "value": 17.801
+  },
+  {
+    "coordinates": [
+      126.62933858,
+      34.15905599
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:20:00.000Z",
+    "value": 17.368
+  },
+  {
+    "coordinates": [
+      126.62861376,
+      34.15935382
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:25:00.000Z",
+    "value": 17.307
+  },
+  {
+    "coordinates": [
+      126.62799157,
+      34.15980884
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:30:00.000Z",
+    "value": 17.658
+  },
+  {
+    "coordinates": [
+      126.6278587,
+      34.15930406
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:35:00.000Z",
+    "value": 17.285
+  },
+  {
+    "coordinates": [
+      126.62789918,
+      34.15978527
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:40:00.000Z",
+    "value": 17.382
+  },
+  {
+    "coordinates": [
+      126.62839228,
+      34.15929062
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:45:00.000Z",
+    "value": 17.564
+  },
+  {
+    "coordinates": [
+      126.62916565,
+      34.15888459
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:50:00.000Z",
+    "value": 17.011
+  },
+  {
+    "coordinates": [
+      126.62843266,
+      34.1594202
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T06:55:00.000Z",
+    "value": 17.69
+  },
+  {
+    "coordinates": [
+      126.62868481,
+      34.15932273
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:00:00.000Z",
+    "value": 17.852
+  },
+  {
+    "coordinates": [
+      126.62819867,
+      34.15966514
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:05:00.000Z",
+    "value": 17.623
+  },
+  {
+    "coordinates": [
+      126.62905635,
+      34.15990478
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:10:00.000Z",
+    "value": 17.807
+  },
+  {
+    "coordinates": [
+      126.62878126,
+      34.1599066
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:15:00.000Z",
+    "value": 17.803
+  },
+  {
+    "coordinates": [
+      126.62900912,
+      34.15979862
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:20:00.000Z",
+    "value": 17.967
+  },
+  {
+    "coordinates": [
+      126.62853558,
+      34.15990665
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:25:00.000Z",
+    "value": 17.24
+  },
+  {
+    "coordinates": [
+      126.62866258,
+      34.15967048
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:30:00.000Z",
+    "value": 17.612
+  },
+  {
+    "coordinates": [
+      126.62890574,
+      34.15981898
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:35:00.000Z",
+    "value": 18.11
+  },
+  {
+    "coordinates": [
+      126.62911017,
+      34.15895375
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:40:00.000Z",
+    "value": 17.482
+  },
+  {
+    "coordinates": [
+      126.62815756,
+      34.15871755
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:45:00.000Z",
+    "value": 18.19
+  },
+  {
+    "coordinates": [
+      126.62781626,
+      34.15921427
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:50:00.000Z",
+    "value": 17.476
+  },
+  {
+    "coordinates": [
+      126.62866627,
+      34.15962625
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T07:55:00.000Z",
+    "value": 17.78
+  },
+  {
+    "coordinates": [
+      126.62858134,
+      34.15934104
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:00:00.000Z",
+    "value": 17.684
+  },
+  {
+    "coordinates": [
+      126.6293798,
+      34.15931825
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:05:00.000Z",
+    "value": 17.976
+  },
+  {
+    "coordinates": [
+      126.62857462,
+      34.15941336
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:10:00.000Z",
+    "value": 18.56
+  },
+  {
+    "coordinates": [
+      126.6281183,
+      34.15875826
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:15:00.000Z",
+    "value": 18.289
+  },
+  {
+    "coordinates": [
+      126.62879752,
+      34.15990139
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:20:00.000Z",
+    "value": 18.1
+  },
+  {
+    "coordinates": [
+      126.62910776,
+      34.15880179
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:25:00.000Z",
+    "value": 19.11
+  },
+  {
+    "coordinates": [
+      126.62943683,
+      34.1599407
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:30:00.000Z",
+    "value": 18.483
+  },
+  {
+    "coordinates": [
+      126.62839172,
+      34.15933228
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:35:00.000Z",
+    "value": 18.924
+  },
+  {
+    "coordinates": [
+      126.6286344,
+      34.15942266
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:40:00.000Z",
+    "value": 18.81
+  },
+  {
+    "coordinates": [
+      126.6278875,
+      34.15995399
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:45:00.000Z",
+    "value": 18.528
+  },
+  {
+    "coordinates": [
+      126.62803922,
+      34.15991591
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:50:00.000Z",
+    "value": 18.877
+  },
+  {
+    "coordinates": [
+      126.62865167,
+      34.15906577
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T08:55:00.000Z",
+    "value": 19.284
+  },
+  {
+    "coordinates": [
+      126.62772478,
+      34.15901123
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:00:00.000Z",
+    "value": 19.027
+  },
+  {
+    "coordinates": [
+      126.62852691,
+      34.15910106
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:05:00.000Z",
+    "value": 19.135
+  },
+  {
+    "coordinates": [
+      126.62919561,
+      34.1587948
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:10:00.000Z",
+    "value": 19.691
+  },
+  {
+    "coordinates": [
+      126.62942177,
+      34.15991645
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:15:00.000Z",
+    "value": 19.543
+  },
+  {
+    "coordinates": [
+      126.62755586,
+      34.15942784
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:20:00.000Z",
+    "value": 19.849
+  },
+  {
+    "coordinates": [
+      126.6286561,
+      34.15941219
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:25:00.000Z",
+    "value": 19.349
+  },
+  {
+    "coordinates": [
+      126.62861976,
+      34.15937474
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:30:00.000Z",
+    "value": 19.571
+  },
+  {
+    "coordinates": [
+      126.62919575,
+      34.15886258
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:35:00.000Z",
+    "value": 19.163
+  },
+  {
+    "coordinates": [
+      126.62852406,
+      34.15937789
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:40:00.000Z",
+    "value": 19.56
+  },
+  {
+    "coordinates": [
+      126.62842858,
+      34.15936471
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:45:00.000Z",
+    "value": 19.24
+  },
+  {
+    "coordinates": [
+      126.62869452,
+      34.15995922
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:50:00.000Z",
+    "value": 18.869
+  },
+  {
+    "coordinates": [
+      126.62896952,
+      34.15945617
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T09:55:00.000Z",
+    "value": 18.976
+  },
+  {
+    "coordinates": [
+      126.62931323,
+      34.15894769
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:00:00.000Z",
+    "value": 19.536
+  },
+  {
+    "coordinates": [
+      126.62768914,
+      34.1594373
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:05:00.000Z",
+    "value": 18.88
+  },
+  {
+    "coordinates": [
+      126.62893106,
+      34.15936535
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:10:00.000Z",
+    "value": 18.942
+  },
+  {
+    "coordinates": [
+      126.62969422,
+      34.15941031
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:15:00.000Z",
+    "value": 18.874
+  },
+  {
+    "coordinates": [
+      126.62851219,
+      34.15928601
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:20:00.000Z",
+    "value": 18.889
+  },
+  {
+    "coordinates": [
+      126.62777201,
+      34.15961336
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:25:00.000Z",
+    "value": 18.578
+  },
+  {
+    "coordinates": [
+      126.62769728,
+      34.15951884
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:30:00.000Z",
+    "value": 18.828
+  },
+  {
+    "coordinates": [
+      126.62810422,
+      34.15905623
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:35:00.000Z",
+    "value": 18.675
+  },
+  {
+    "coordinates": [
+      126.62914599,
+      34.15947478
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:40:00.000Z",
+    "value": 18.631
+  },
+  {
+    "coordinates": [
+      126.62901061,
+      34.16005657
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:45:00.000Z",
+    "value": 18.58
+  },
+  {
+    "coordinates": [
+      126.629118,
+      34.15958785
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:50:00.000Z",
+    "value": 18.734
+  },
+  {
+    "coordinates": [
+      126.62896055,
+      34.15907968
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T10:55:00.000Z",
+    "value": 17.912
+  },
+  {
+    "coordinates": [
+      126.62860385,
+      34.15933166
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:00:00.000Z",
+    "value": 17.715
+  },
+  {
+    "coordinates": [
+      126.62923126,
+      34.15935231
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:05:00.000Z",
+    "value": 17.718
+  },
+  {
+    "coordinates": [
+      126.62839652,
+      34.15959084
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:10:00.000Z",
+    "value": 18.104
+  },
+  {
+    "coordinates": [
+      126.6284871,
+      34.15950379
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:15:00.000Z",
+    "value": 17.544
+  },
+  {
+    "coordinates": [
+      126.62817411,
+      34.1597964
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:20:00.000Z",
+    "value": 17.54
+  },
+  {
+    "coordinates": [
+      126.62854827,
+      34.15944384
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:25:00.000Z",
+    "value": 17.643
+  },
+  {
+    "coordinates": [
+      126.62810181,
+      34.15971273
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:30:00.000Z",
+    "value": 17.394
+  },
+  {
+    "coordinates": [
+      126.62816516,
+      34.15950922
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:35:00.000Z",
+    "value": 17.454
+  },
+  {
+    "coordinates": [
+      126.62852161,
+      34.15950841
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:40:00.000Z",
+    "value": 17.731
+  },
+  {
+    "coordinates": [
+      126.62852466,
+      34.15931473
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:45:00.000Z",
+    "value": 17.903
+  },
+  {
+    "coordinates": [
+      126.62809263,
+      34.15998504
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:50:00.000Z",
+    "value": 17.743
+  },
+  {
+    "coordinates": [
+      126.62821653,
+      34.15992645
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T11:55:00.000Z",
+    "value": 17.801
+  },
+  {
+    "coordinates": [
+      126.62890622,
+      34.159987
+    ],
+    "unit": "°C",
+    "device_id": "gis09",
+    "measure_time": "2025-06-10T12:00:00.000Z",
+    "value": 17.908
+  }
+]
