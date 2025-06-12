@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>시온플럭스 BLE 비콘 지오펜싱 미니맵 시각화</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { font-family: '맑은 고딕', Arial, sans-serif; margin:40px; }
+    h2 { color: #1976d2; }
+    #mainRow {
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+    }
+    #map {
+      width: 70vw;
+      min-width: 640px;
+      height: 800px;
+    }
+    #miniMapWrap {
+      width: 420px;
+      min-width: 320px;
+      margin: 0;
+    }
+    #miniMapCanvas { border:1px solid #aaa; background:#fff; }
+    #miniMapLabel { margin-bottom:6px; font-weight:bold; }
+    .input-group { margin-bottom: 10px; }
+    label { margin-right: 10px; }
+    input[type="text"] { width: 400px; }
+    #alert { color: red; margin-bottom: 10px;}
+    #sliderWrap { margin: 10px 0; }
+    #dataList { max-height: 180px; overflow-y: auto; border:1px solid #eee; padding:8px; font-size:14px;}
+    .data-row { cursor:pointer; }
+    .data-row:hover { background:#e3f2fd; }
+    #zoomControl { margin-bottom: 10px; }
+    #layerBtn { margin-left: 10px; }
+    #lockBtn { margin-left: 10px; }
+    #imgInput { margin-top:6px; }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+  <h2>시온플럭스 BLE 비콘 지오펜싱 미니맵 시각화</h2>
+  <div class="input-group">
+    <label>JSON 파일 여러개 업로드(최대 20개): <input type="file" id="fileInput" accept=".json" multiple></label>
+    <label>또는 API 주소: <input type="text" id="apiInput" placeholder="https://.../api/sensor"></label>
+    <button onclick="loadApi()">API 불러오기</button>
+    <button onclick="clearMap()">지도 초기화</button>
+    <button id="layerBtn" onclick="toggleLayer()">지도타입: <span id="layerLabel">일반</span></button>
+    <button id="lockBtn" onclick="toggleMapLock()">지도 고정: <span id="lockLabel" style="color:#1976d2;">OFF</span></button>
+  </div>
+  <div id="zoomControl">
+    <label>지도 축척(확대/축소 레벨): 
+      <input type="number" id="zoomLevel" min="1" max="22" value="18" style="width:60px;">
+      <button onclick="setZoom()">적용 및 고정</button>
+      <span id="zoomStatus" style="color:#1976d2;"></span>
+    </label>
+  </div>
+  <div id="alert"></div>
+  <div id="sliderWrap" style="display:none;">
+    <input type="range" id="timeSlider" min="0" max="0" value="0" style="width:60%;">
+    <span id="sliderLabel"></span>
+    <button onclick="playAnim()" id="playBtn">▶</button>
+    <button onclick="stopAnim()" id="stopBtn" style="display:none;">■</button>
+  </div>
+  <div id="mainRow">
+    <div id="map"></div>
+    <div id="miniMapWrap">
+      <div id="miniMapLabel">미니맵(15m x 15m, 상대좌표):</div>
+      <input type="file" id="imgInput" accept="image/*">
+      <br>
+      <canvas id="miniMapCanvas" width="400" height="400"></canvas>
+    </div>
+  </div>
+  <div id="dataList"></div>
+  <script>
+    // 지도 기본/위성 레이어 (maxZoom 22)
+    let baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors', maxZoom: 22
+    });
+    let satLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      attribution: '© Google Satellite', maxZoom: 22
+    });
+    let map = L.map('map', {layers: [baseLayer], maxZoom:22}).setView([34.15813, 126.62715], 18);
+    let isSatellite = false;
+    function toggleLayer() {
+      if (isSatellite) {
+        map.removeLayer(satLayer); map.addLayer(baseLayer);
+        document.getElementById('layerLabel').textContent = '일반';
+      } else {
+        map.removeLayer(baseLayer); map.addLayer(satLayer);
+        document.getElementById('layerLabel').textContent = '위성';
+      }
+      isSatellite = !isSatellite;
+    }
+
+    // 지도 위치/축척 고정 기능
+    let mapLocked = false;
+    let lockedCenter = null;
+    let lockedZoom = null;
+    function toggleMapLock() {
+      mapLocked = !mapLocked;
+      document.getElementById('lockLabel').textContent = mapLocked ? 'ON' : 'OFF';
+      document.getElementById('lockLabel').style.color = mapLocked ? '#d32f2f' : '#1976d2';
+      if (mapLocked) {
+        lockedCenter = map.getCenter();
+        lockedZoom = map.getZoom();
+      } else {
+        lockedCenter = null;
+        lockedZoom = null;
+      }
+    }
+
+    // 지표명 매핑
+    const unitMap = {
+      "°C": "temp",
+      "g/Kg": "Sal",
+      "pH": "pH",
+      "mg/L": "Do"
+    };
+
+    let markers = [];
+    let geoFences = [];
+    let allData = [];
+    let times = [];
+    let timeIndex = 0;
+    let animTimer = null;
+    let fixedZoom = 18;
+    let deviceIds = [];
+
+    function clearMap() {
+      markers.forEach(m=>map.removeLayer(m));
+      geoFences.forEach(c=>map.removeLayer(c));
+      markers = [];
+      geoFences = [];
+      document.getElementById('dataList').innerHTML = '';
+      document.getElementById('alert').textContent = '';
+      document.getElementById('sliderWrap').style.display = 'none';
+      allData = [];
+      times = [];
+      timeIndex = 0;
+      deviceIds = [];
+      stopAnim();
+      drawMiniMap([]); // 미니맵도 초기화
+    }
+
+    // 여러 JSON 파일 합치기
+    document.getElementById('fileInput').addEventListener('change', e => {
+      const files = Array.from(e.target.files).slice(0,20);
+      if (!files.length) return;
+      let loaded = 0;
+      let arrs = [];
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = evt => {
+          let arr;
+          try { arr = JSON.parse(evt.target.result); } catch { arr = []; }
+          if (!Array.isArray(arr)) {
+            if (arr.result && Array.isArray(arr.result)) arr = arr.result;
+            else if (arr.data && Array.isArray(arr.data)) arr = arr.data;
+            else arr = [];
+          }
+          arrs.push(arr);
+          loaded++;
+          if (loaded === files.length) {
+            handleSensorData([].concat(...arrs));
+          }
+        };
+        reader.readAsText(file);
+      });
+    });
+
+    // API 불러오기
+    async function loadApi() {
+      const url = document.getElementById('apiInput').value.trim();
+      if (!url) {
+        document.getElementById('alert').textContent = "API 주소를 입력하세요.";
+        return;
+      }
+      document.getElementById('alert').textContent = "API에서 데이터 불러오는 중...";
+      try {
+        const res = await fetch(url);
+        let arr = await res.json();
+        if (!Array.isArray(arr)) {
+          if (arr.result && Array.isArray(arr.result)) arr = arr.result;
+          else if (arr.data && Array.isArray(arr.data)) arr = arr.data;
+          else arr = [];
+        }
+        handleSensorData(arr);
+        document.getElementById('alert').textContent = "API 데이터 불러오기 완료!";
+      } catch {
+        document.getElementById('alert').textContent = "API 데이터 불러오기 실패!";
+      }
+    }
+
+    // 구조 자동 인식 및 시간별 데이터 정렬
+    function handleSensorData(data) {
+      clearMap();
+      if (!Array.isArray(data) || !data.length) {
+        document.getElementById('alert').textContent = "데이터가 없습니다.";
+        return;
+      }
+      allData = data.map(d => {
+        let lat = null, lon = null;
+        if (Array.isArray(d.coordinates) && d.coordinates.length >= 2) {
+          lon = d.coordinates[0];
+          lat = d.coordinates[1];
+        } else if (d.coordinates && d.coordinates.lon && d.coordinates.lat) {
+          lon = d.coordinates.lon;
+          lat = d.coordinates.lat;
+        }
+        return {...d, lat, lon, timeNum: new Date(d.measure_time).getTime()};
+      }).filter(d=>d.lat!==null && d.lon!==null && !isNaN(d.timeNum));
+      if (!allData.length) {
+        document.getElementById('alert').textContent = "위치정보가 있는 데이터가 없습니다.";
+        drawMiniMap([]);
+        return;
+      }
+      times = Array.from(new Set(allData.map(d=>d.timeNum))).sort((a,b)=>a-b);
+      deviceIds = Array.from(new Set(allData.map(d=>d.device_id)));
+      if (!times.length) return;
+      timeIndex = 0;
+      document.getElementById('sliderWrap').style.display = '';
+      document.getElementById('timeSlider').min = 0;
+      document.getElementById('timeSlider').max = times.length-1;
+      document.getElementById('timeSlider').value = 0;
+      updateSliderLabel();
+      drawMarkersForTime(times[0]);
+      document.getElementById('timeSlider').oninput = function() {
+        timeIndex = parseInt(this.value,10);
+        updateSliderLabel();
+        drawMarkersForTime(times[timeIndex]);
+      };
+    }
+
+    function updateSliderLabel() {
+      if (!times.length) return;
+      const dt = new Date(times[timeIndex]);
+      document.getElementById('sliderLabel').textContent =
+        dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' +
+        String(dt.getDate()).padStart(2,'0') + ' ' +
+        String(dt.getHours()).padStart(2,'0') + ':' +
+        String(dt.getMinutes()).padStart(2,'0');
+    }
+
+    // 보간(이전값 유지) 동시표시 drawMarkersForTime
+    function drawMarkersForTime(timeNum) {
+      markers.forEach(m=>map.removeLayer(m));
+      geoFences.forEach(c=>map.removeLayer(c));
+      markers = [];
+      geoFences = [];
+      // 각 기기별로 해당 시간까지의 데이터 중 가장 최근값 찾기
+      const rows = [];
+      deviceIds.forEach(device_id => {
+        const devData = allData.filter(d=>d.device_id === device_id && d.timeNum <= timeNum)
+                               .sort((a,b)=>b.timeNum - a.timeNum);
+        if (devData.length) rows.push(devData[0]);
+      });
+      let html = '<b>해당 시각 측정치 목록 (클릭시 지오펜싱)</b><br>';
+      html += '<table border="1" cellpadding="3" style="border-collapse:collapse;font-size:13px;"><tr><th>기기ID</th><th>지표</th><th>위도</th><th>경도</th><th>값</th><th>단위</th><th>측정시각</th></tr>';
+      rows.forEach((d, idx) => {
+        const indicator = unitMap[d.unit] || d.unit;
+        const marker = L.marker([d.lat, d.lon]).addTo(map);
+        markers.push(marker);
+        const popup = `<b>기기ID:</b> ${d.device_id}<br>
+          <b>지표:</b> ${indicator}<br>
+          <b>위치:</b> ${d.lat.toFixed(6)}, ${d.lon.toFixed(6)}<br>
+          <b>측정값:</b> ${d.value} ${d.unit}<br>
+          <b>측정시각:</b> ${d.measure_time}`;
+        marker.bindPopup(popup);
+        html += `<tr class="data-row" onclick="window.createGeoFence(${d.lat},${d.lon},'${d.device_id}','${indicator}','${d.value}','${d.unit}','${d.measure_time}')">
+          <td>${d.device_id}</td>
+          <td>${indicator}</td>
+          <td>${d.lat.toFixed(6)}</td>
+          <td>${d.lon.toFixed(6)}</td>
+          <td>${d.value}</td>
+          <td>${d.unit}</td>
+          <td>${d.measure_time}</td>
+        </tr>`;
+      });
+      html += '</table>';
+      document.getElementById('dataList').innerHTML = html;
+      // 지도 중심/zoom은 사용자가 "지도 고정"을 켜면 그대로, 아니면 첫번째 마커로 이동
+      if (!mapLocked && rows.length) {
+        map.setView([rows[0].lat, rows[0].lon], fixedZoom);
+      } else if (mapLocked && lockedCenter && lockedZoom) {
+        map.setView(lockedCenter, lockedZoom);
+      }
+      // 미니맵도 동기화
+      drawMiniMap(rows);
+    }
+
+    // 지오펜싱(원) 생성
+    window.createGeoFence = function(lat, lon, device_id, indicator, value, unit, measure_time) {
+      geoFences.forEach(c=>map.removeLayer(c));
+      geoFences = [];
+      const circle = L.circle([lat, lon], {
+        color: '#d32f2f',
+        fillColor: '#ffcdd2',
+        fillOpacity: 0.3,
+        radius: 150
+      }).addTo(map);
+      geoFences.push(circle);
+      circle.bindPopup(
+        `<b>지오펜싱</b><br>기기ID: ${device_id}<br>지표: ${indicator}<br>위치: ${lat.toFixed(6)}, ${lon.toFixed(6)}<br>값: ${value} ${unit}<br>측정시각: ${measure_time}`
+      ).openPopup();
+      if (!mapLocked) map.setView([lat, lon], fixedZoom);
+    };
+
+    // 축척(zoom level) 고정 기능
+    function setZoom() {
+      const zl = parseInt(document.getElementById('zoomLevel').value,10);
+      if (isNaN(zl) || zl < 1 || zl > 22) {
+        document.getElementById('zoomStatus').textContent = "유효한 축척(1~22)을 입력하세요.";
+        return;
+      }
+      fixedZoom = zl;
+      map.setZoom(fixedZoom);
+      document.getElementById('zoomStatus').textContent = `고정됨 (zoom level: ${fixedZoom})`;
+      if (mapLocked && lockedCenter) {
+        map.setView(lockedCenter, fixedZoom);
+        lockedZoom = fixedZoom;
+      }
+    }
+
+    // 애니메이션 플레이/정지 (모든 기기 동시 처리)
+    function playAnim() {
+      if (animTimer) return;
+      document.getElementById('playBtn').style.display = 'none';
+      document.getElementById('stopBtn').style.display = '';
+      animTimer = setInterval(() => {
+        timeIndex = (timeIndex+1)%times.length;
+        document.getElementById('timeSlider').value = timeIndex;
+        updateSliderLabel();
+        drawMarkersForTime(times[timeIndex]);
+      }, 1000);
+    }
+    function stopAnim() {
+      if (animTimer) clearInterval(animTimer);
+      animTimer = null;
+      document.getElementById('playBtn').style.display = '';
+      document.getElementById('stopBtn').style.display = 'none';
+    }
+
+    // ---------------- 미니맵 ----------------
+    let miniMapImg = null;
+    document.getElementById('imgInput').addEventListener('change', function(e){
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        miniMapImg = new window.Image();
+        miniMapImg.onload = () => drawMiniMap();
+        miniMapImg.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // 미니맵: 15m x 15m (150m x 150m 전체) 그리드, rows는 현재 시점 센서들
+    function drawMiniMap(rows=[]) {
+      const canvas = document.getElementById('miniMapCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      // 이미지가 있으면 배경으로 그림
+      if (miniMapImg) {
+        ctx.drawImage(miniMapImg,0,0,canvas.width,canvas.height);
+      } else {
+        ctx.fillStyle="#f5f5f5"; ctx.fillRect(0,0,canvas.width,canvas.height);
+      }
+      // 15m x 15m 그리드 (총 15칸, 150m)
+      ctx.strokeStyle="#bbb";
+      for(let i=0;i<=15;i++){
+        ctx.beginPath();
+        ctx.moveTo(0,i*canvas.height/15); ctx.lineTo(canvas.width,i*canvas.height/15);
+        ctx.moveTo(i*canvas.width/15,0); ctx.lineTo(i*canvas.width/15,canvas.height);
+        ctx.stroke();
+      }
+      // 센서 위치 표시 (상대좌표 변환, 150m 내)
+      if (!rows || !rows.length) return;
+      // 기준점: 센서들 중 최소 lon/lat
+      let minLon = Math.min(...rows.map(d=>d.lon));
+      let minLat = Math.min(...rows.map(d=>d.lat));
+      const oneDegLat = 111_000;
+      const oneDegLon = 111_000 * Math.cos(minLat * Math.PI/180);
+      rows.forEach((d,idx)=>{
+        const dx = ((d.lon - minLon)*oneDegLon)/150; // 15칸=150m
+        const dy = ((d.lat - minLat)*oneDegLat)/150;
+        const x = Math.max(0, Math.min(canvas.width-1, dx*canvas.width));
+        const y = canvas.height - Math.max(0, Math.min(canvas.height-1, dy*canvas.height));
+        ctx.beginPath();
+        ctx.arc(x, y, 12, 0, 2*Math.PI);
+        ctx.fillStyle = "#1976d2";
+        ctx.globalAlpha = 0.7;
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+        ctx.strokeStyle = "#fff";
+        ctx.stroke();
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(d.device_id, x, y-16);
+      });
+    }
+  </script>
+</body>
+</html>
