@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>BLE 비콘 연속성 모니터링(실시간 등급 전환)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body { font-family: '맑은 고딕', Arial, sans-serif; margin:40px; }
+    h2 { color: #1976d2; }
+    #statusSummary {
+      margin: 24px 0 24px 0;
+      padding: 20px 30px;
+      background: #fffde7;
+      border: 2px solid #ffe082;
+      border-radius: 16px;
+      font-size: 1.5em;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .legend-box {
+      display: flex; gap: 18px; align-items: center; font-size:1em;
+    }
+    .legend-dot { display:inline-block; width:22px; height:22px; border-radius:50%; margin-right:7px; vertical-align:middle;}
+    .legend-dot.normal { background:#4caf50; border:2px solid #388e3c;}
+    .legend-dot.caution { background:#ffeb3b; border:2px solid #fbc02d;}
+    .legend-dot.warn { background:#ff9800; border:2px solid #f57c00;}
+    .legend-dot.danger { background:#f44336; border:2px solid #b71c1c;}
+    .legend-dot.gw { background:#ff9800; border:2px solid #f57c00;}
+    #mainRow { display: flex; align-items: flex-start; gap: 32px; }
+    #map { width: 70vw; min-width: 500px; height: 720px; }
+    #miniMapWrap { width: 420px; min-width: 320px; margin: 0; }
+    #miniMapCanvas { border:1px solid #aaa; background:#fff; }
+    #miniMapLabel { margin-bottom:6px; font-weight:bold; }
+    .input-group { margin-bottom: 10px; }
+    label { margin-right: 10px; }
+    input[type="text"] { width: 400px; }
+    #alert { color: red; margin-bottom: 10px;}
+    #sliderWrap { margin: 10px 0; }
+    #dataList { max-height: 180px; overflow-y: auto; border:1px solid #eee; padding:8px; font-size:14px;}
+    .data-row { cursor:pointer; }
+    .data-row:hover { background:#e3f2fd; }
+    #zoomControl { margin-bottom: 10px; }
+    #layerBtn { margin-left: 10px; }
+    #lockBtn { margin-left: 10px; }
+    #imgInput { margin-top:6px; }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+  <h2>BLE 비콘 연속성 모니터링</h2>
+  <div id="statusSummary">
+    <span style="font-size:1.2em;">비콘 데이터 연속성 상태:</span>
+    <span id="statusCounts"></span>
+    <span class="legend-box">
+      <span><span class="legend-dot normal"></span>정상(1분 이하)</span>
+      <span><span class="legend-dot caution"></span>주의(2~2.9분)</span>
+      <span><span class="legend-dot warn"></span>경고(3~7.9분)</span>
+      <span><span class="legend-dot danger"></span>위험(8분 이상)</span>
+      <span><span class="legend-dot gw"></span>게이트웨이</span>
+    </span>
+  </div>
+  <div class="input-group">
+    <label>JSON 파일 여러개 업로드(최대 20개): <input type="file" id="fileInput" accept=".json" multiple></label>
+    <label>또는 API 주소: <input type="text" id="apiInput" placeholder="https://.../api/sensor"></label>
+    <button onclick="loadApi()">API 불러오기</button>
+    <button onclick="clearMap()">지도 초기화</button>
+    <button id="layerBtn" onclick="toggleLayer()">지도타입: <span id="layerLabel">일반</span></button>
+    <button id="lockBtn" onclick="toggleMapLock()">지도 고정: <span id="lockLabel" style="color:#1976d2;">OFF</span></button>
+  </div>
+  <div id="zoomControl">
+    <label>지도 축척(확대/축소 레벨): 
+      <input type="number" id="zoomLevel" min="1" max="22" value="18" style="width:60px;">
+      <button onclick="setZoom()">적용 및 고정</button>
+      <span id="zoomStatus" style="color:#1976d2;"></span>
+    </label>
+  </div>
+  <div id="alert"></div>
+  <div id="sliderWrap" style="display:none;">
+    <input type="range" id="timeSlider" min="0" max="0" value="0" style="width:60%;">
+    <span id="sliderLabel"></span>
+    <button onclick="playAnim()" id="playBtn">▶</button>
+    <button onclick="stopAnim()" id="stopBtn" style="display:none;">■</button>
+  </div>
+  <div id="mainRow">
+    <div id="map"></div>
+    <div id="miniMapWrap">
+      <div id="miniMapLabel">미니맵(게이트웨이 기준 15m 반경, 상대좌표):</div>
+      <input type="file" id="imgInput" accept="image/*">
+      <br>
+      <canvas id="miniMapCanvas" width="400" height="400"></canvas>
+    </div>
+  </div>
+  <div id="dataList"></div>
+  <script>
+    // 지도 기본/위성 레이어 (maxZoom 22)
+    let baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors', maxZoom: 22
+    });
+    let satLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      attribution: '© Google Satellite', maxZoom: 22
+    });
+    let map = L.map('map', {layers: [baseLayer], maxZoom:22}).setView([34.76, 127.6625], 18);
+    let isSatellite = false;
+    function toggleLayer() {
+      if (isSatellite) {
+        map.removeLayer(satLayer); map.addLayer(baseLayer);
+        document.getElementById('layerLabel').textContent = '일반';
+      } else {
+        map.removeLayer(baseLayer); map.addLayer(satLayer);
+        document.getElementById('layerLabel').textContent = '위성';
+      }
+      isSatellite = !isSatellite;
+    }
+
+    // 지도 위치/축척 고정 기능
+    let mapLocked = false;
+    let lockedCenter = null;
+    let lockedZoom = null;
+    function toggleMapLock() {
+      mapLocked = !mapLocked;
+      document.getElementById('lockLabel').textContent = mapLocked ? 'ON' : 'OFF';
+      document.getElementById('lockLabel').style.color = mapLocked ? '#d32f2f' : '#1976d2';
+      if (mapLocked) {
+        lockedCenter = map.getCenter();
+        lockedZoom = map.getZoom();
+      } else {
+        lockedCenter = null;
+        lockedZoom = null;
+      }
+    }
+
+    // BLE/GPS 구분
+    const unitMap = {
+      "BLE": "비콘",
+      "GPS": "게이트웨이"
+    };
+
+    // 주황색 게이트웨이 아이콘
+    const gatewayIcon = L.icon({
+      iconUrl: 'https://img.icons8.com/fluency/48/ff9800/marker-storm.png',
+      iconSize: [38, 38],
+      iconAnchor: [19, 38],
+      popupAnchor: [0, -38]
+    });
+
+    let markers = [];
+    let geoFences = [];
+    let allData = [];
+    let times = [];
+    let timeIndex = 0;
+    let animTimer = null;
+    let fixedZoom = 18;
+    let deviceIds = [];
+
+    function clearMap() {
+      markers.forEach(m=>map.removeLayer(m));
+      geoFences.forEach(c=>map.removeLayer(c));
+      markers = [];
+      geoFences = [];
+      document.getElementById('dataList').innerHTML = '';
+      document.getElementById('alert').textContent = '';
+      document.getElementById('sliderWrap').style.display = 'none';
+      allData = [];
+      times = [];
+      timeIndex = 0;
+      deviceIds = [];
+      stopAnim();
+      drawMiniMap([]); // 미니맵도 초기화
+      updateStatusSummary({});
+    }
+
+    // 여러 JSON 파일 합치기
+    document.getElementById('fileInput').addEventListener('change', e => {
+      const files = Array.from(e.target.files).slice(0,20);
+      if (!files.length) return;
+      let loaded = 0;
+      let arrs = [];
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = evt => {
+          let arr;
+          try { arr = JSON.parse(evt.target.result); } catch { arr = []; }
+          if (!Array.isArray(arr)) {
+            if (arr.result && Array.isArray(arr.result)) arr = arr.result;
+            else if (arr.data && Array.isArray(arr.data)) arr = arr.data;
+            else arr = [];
+          }
+          arrs.push(arr);
+          loaded++;
+          if (loaded === files.length) {
+            handleSensorData([].concat(...arrs));
+          }
+        };
+        reader.readAsText(file);
+      });
+    });
+
+    // API 불러오기
+    async function loadApi() {
+      const url = document.getElementById('apiInput').value.trim();
+      if (!url) {
+        document.getElementById('alert').textContent = "API 주소를 입력하세요.";
+        return;
+      }
+      document.getElementById('alert').textContent = "API에서 데이터 불러오는 중...";
+      try {
+        const res = await fetch(url);
+        let arr = await res.json();
+        if (!Array.isArray(arr)) {
+          if (arr.result && Array.isArray(arr.result)) arr = arr.result;
+          else if (arr.data && Array.isArray(arr.data)) arr = arr.data;
+          else arr = [];
+        }
+        handleSensorData(arr);
+        document.getElementById('alert').textContent = "API 데이터 불러오기 완료!";
+      } catch {
+        document.getElementById('alert').textContent = "API 데이터 불러오기 실패!";
+      }
+    }
+
+    // 데이터 gap 상태 분석 (슬라이더 시점까지의 데이터만 분석, gap 이후 데이터 들어오면 정상 복귀)
+    function analyzeBeaconGaps(currentTimeNum) {
+      const gapThresholds = [
+        { key: "주의", min: 12, max: 17, color: "#ffeb3b" },    // 2~2.9분
+        { key: "경고", min: 18, max: 47, color: "#ff9800" },    // 3~7.9분
+        { key: "위험", min: 48, max: 10000, color: "#f44336" }  // 8분 이상
+      ];
+      let beaconTimes = {};
+      allData.forEach(d => {
+        if (d.unit === "BLE" && d.device_id && d.timeNum <= currentTimeNum) {
+          if (!beaconTimes[d.device_id]) beaconTimes[d.device_id] = [];
+          beaconTimes[d.device_id].push(d.timeNum);
+        }
+      });
+      let beaconStatus = {};
+      Object.entries(beaconTimes).forEach(([id, arr]) => {
+        arr.sort((a,b)=>a-b);
+        let status = "정상", color = "#4caf50";
+        let last = null;
+        for (let i = 0; i < arr.length; i++) {
+          let t = arr[i];
+          if (last !== null) {
+            let gap = Math.round((t-last)/1000/10); // 10초 단위 gap 개수
+            // gap이 임계점 이상이면 그 구간만 상태 전환, 이후 데이터 들어오면 정상 복귀
+            let found = false;
+            for (let th of gapThresholds) {
+              if (gap >= th.min && gap <= th.max) {
+                status = th.key; color = th.color; found = true; break;
+              }
+              if (gap >= 48) { status = "위험"; color = "#f44336"; found = true; break; }
+            }
+            if (found && i === arr.length-1) {
+              // 마지막 데이터가 gap 이후 첫 데이터면 정상 복귀
+              status = "정상"; color = "#4caf50";
+            }
+            if (found && i < arr.length-1) {
+              // gap 구간에 데이터가 들어왔으므로 정상 복귀
+              status = "정상"; color = "#4caf50";
+            }
+          }
+          last = t;
+        }
+        // 마지막 gap이 임계점 이상이고 아직 데이터가 안들어왔다면 해당 상태 유지
+        if (arr.length >= 2) {
+          let lastGap = Math.round((arr[arr.length-1]-arr[arr.length-2])/1000/10);
+          let found = false;
+          for (let th of gapThresholds) {
+            if (lastGap >= th.min && lastGap <= th.max) {
+              status = th.key; color = th.color; found = true; break;
+            }
+            if (lastGap >= 48) { status = "위험"; color = "#f44336"; found = true; break; }
+          }
+        }
+        beaconStatus[id] = { status, color };
+      });
+      return beaconStatus;
+    }
+
+    function updateStatusSummary(beaconStatus) {
+      let counts = { "정상":0, "주의":0, "경고":0, "위험":0 };
+      Object.values(beaconStatus).forEach(st=>{ counts[st.status] = (counts[st.status]||0)+1; });
+      document.getElementById('statusCounts').innerHTML =
+        `<span style="color:#4caf50;">정상 ${counts["정상"]||0}</span> / 
+         <span style="color:#fbc02d;">주의 ${counts["주의"]||0}</span> / 
+         <span style="color:#ff9800;">경고 ${counts["경고"]||0}</span> / 
+         <span style="color:#f44336;">위험 ${counts["위험"]||0}</span>`;
+    }
+
+    function handleSensorData(data) {
+      clearMap();
+      if (!Array.isArray(data) || !data.length) {
+        document.getElementById('alert').textContent = "데이터가 없습니다.";
+        updateStatusSummary({});
+        return;
+      }
+      allData = data.map(d => {
+        let lat = null, lon = null;
+        if (Array.isArray(d.coordinates) && d.coordinates.length >= 2) {
+          lon = d.coordinates[0];
+          lat = d.coordinates[1];
+        } else if (d.coordinates && d.coordinates.lon && d.coordinates.lat) {
+          lon = d.coordinates.lon;
+          lat = d.coordinates.lat;
+        }
+        return {...d, lat, lon, timeNum: new Date(d.measure_time).getTime()};
+      }).filter(d=>d.lat!==null && d.lon!==null && !isNaN(d.timeNum));
+      if (!allData.length) {
+        document.getElementById('alert').textContent = "위치정보가 있는 데이터가 없습니다.";
+        drawMiniMap([]);
+        updateStatusSummary({});
+        return;
+      }
+      times = Array.from(new Set(allData.map(d=>d.timeNum))).sort((a,b)=>a-b);
+      deviceIds = Array.from(new Set(allData.map(d=>d.device_id)));
+      if (!times.length) return;
+      timeIndex = 0;
+      document.getElementById('sliderWrap').style.display = '';
+      document.getElementById('timeSlider').min = 0;
+      document.getElementById('timeSlider').max = times.length-1;
+      document.getElementById('timeSlider').value = 0;
+      updateSliderLabel();
+      drawMarkersForTime(times[0]);
+      document.getElementById('timeSlider').oninput = function() {
+        timeIndex = parseInt(this.value,10);
+        updateSliderLabel();
+        drawMarkersForTime(times[timeIndex]);
+      };
+    }
+
+    function updateSliderLabel() {
+      if (!times.length) return;
+      const dt = new Date(times[timeIndex]);
+      document.getElementById('sliderLabel').textContent =
+        dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' +
+        String(dt.getDate()).padStart(2,'0') + ' ' +
+        String(dt.getHours()).padStart(2,'0') + ':' +
+        String(dt.getMinutes()).padStart(2,'0');
+    }
+
+    function drawMarkersForTime(timeNum) {
+      markers.forEach(m=>map.removeLayer(m));
+      geoFences.forEach(c=>map.removeLayer(c));
+      markers = [];
+      geoFences = [];
+      const beaconStatus = analyzeBeaconGaps(timeNum);
+      updateStatusSummary(beaconStatus);
+      const rows = [];
+      deviceIds.forEach(device_id => {
+        const devData = allData.filter(d=>d.device_id === device_id && d.timeNum <= timeNum)
+                               .sort((a,b)=>b.timeNum - a.timeNum);
+        if (devData.length) rows.push(devData[0]);
+      });
+      let html = '<b>해당 시각 측정치 목록 (클릭시 지오펜싱)</b><br>';
+      html += '<table border="1" cellpadding="3" style="border-collapse:collapse;font-size:15px;"><tr><th>기기ID</th><th>상태</th><th>구분</th><th>위도</th><th>경도</th><th>값</th><th>단위</th><th>측정시각</th></tr>';
+      rows.forEach((d, idx) => {
+        const indicator = unitMap[d.unit] || d.unit;
+        let status = "", color = "#1976d2";
+        if (d.unit === "BLE" && beaconStatus[d.device_id]) {
+          status = beaconStatus[d.device_id].status;
+          color = beaconStatus[d.device_id].color;
+        }
+        let marker;
+        if (d.unit === "GPS") {
+          marker = L.marker([d.lat, d.lon], {icon: gatewayIcon}).addTo(map);
+        } else if (d.unit === "BLE") {
+          marker = L.circleMarker([d.lat, d.lon], {
+            radius: 15,
+            color: color,
+            fillColor: color,
+            fillOpacity: 0.8
+          }).addTo(map);
+        } else {
+          marker = L.marker([d.lat, d.lon]).addTo(map);
+        }
+        markers.push(marker);
+        const popup = `<b>기기ID:</b> ${d.device_id}<br>
+          <b>상태:</b> <span style="color:${color};font-weight:bold">${status||"정상"}</span><br>
+          <b>구분:</b> ${indicator}<br>
+          <b>위치:</b> ${d.lat.toFixed(6)}, ${d.lon.toFixed(6)}<br>
+          <b>측정값:</b> ${d.value} ${d.unit}<br>
+          <b>측정시각:</b> ${d.measure_time}`;
+        marker.bindPopup(popup);
+        html += `<tr class="data-row" style="background:${status==="위험"?"#ffcdd2":status==="경고"?"#ffe0b2":status==="주의"?"#fffde7":"#e8f5e9"}"
+          onclick="window.createGeoFence(${d.lat},${d.lon},'${d.device_id}','${indicator}','${d.value}','${d.unit}','${d.measure_time}')">
+          <td>${d.device_id}</td>
+          <td style="color:${color};font-weight:bold">${status||"정상"}</td>
+          <td>${indicator}</td>
+          <td>${d.lat.toFixed(6)}</td>
+          <td>${d.lon.toFixed(6)}</td>
+          <td>${d.value}</td>
+          <td>${d.unit}</td>
+          <td>${d.measure_time}</td>
+        </tr>`;
+      });
+      html += '</table>';
+      document.getElementById('dataList').innerHTML = html;
+      if (!mapLocked && rows.length) {
+        map.setView([rows[0].lat, rows[0].lon], fixedZoom);
+      } else if (mapLocked && lockedCenter && lockedZoom) {
+        map.setView(lockedCenter, lockedZoom);
+      }
+      drawMiniMap(rows, beaconStatus);
+    }
+
+    window.createGeoFence = function(lat, lon, device_id, indicator, value, unit, measure_time) {
+      geoFences.forEach(c=>map.removeLayer(c));
+      geoFences = [];
+      const circle = L.circle([lat, lon], {
+        color: '#d32f2f',
+        fillColor: '#ffcdd2',
+        fillOpacity: 0.3,
+        radius: 150
+      }).addTo(map);
+      geoFences.push(circle);
+      circle.bindPopup(
+        `<b>지오펜싱</b><br>기기ID: ${device_id}<br>구분: ${indicator}<br>위치: ${lat.toFixed(6)}, ${lon.toFixed(6)}<br>값: ${value} ${unit}<br>측정시각: ${measure_time}`
+      ).openPopup();
+      if (!mapLocked) map.setView([lat, lon], fixedZoom);
+    };
+
+    function setZoom() {
+      const zl = parseInt(document.getElementById('zoomLevel').value,10);
+      if (isNaN(zl) || zl < 1 || zl > 22) {
+        document.getElementById('zoomStatus').textContent = "유효한 축척(1~22)을 입력하세요.";
+        return;
+      }
+      fixedZoom = zl;
+      map.setZoom(fixedZoom);
+      document.getElementById('zoomStatus').textContent = `고정됨 (zoom level: ${fixedZoom})`;
+      if (mapLocked && lockedCenter) {
+        map.setView(lockedCenter, fixedZoom);
+        lockedZoom = fixedZoom;
+      }
+    }
+
+    function playAnim() {
+      if (animTimer) return;
+      document.getElementById('playBtn').style.display = 'none';
+      document.getElementById('stopBtn').style.display = '';
+      animTimer = setInterval(() => {
+        timeIndex = (timeIndex+1)%times.length;
+        document.getElementById('timeSlider').value = timeIndex;
+        updateSliderLabel();
+        drawMarkersForTime(times[timeIndex]);
+      }, 1000);
+    }
+    function stopAnim() {
+      if (animTimer) clearInterval(animTimer);
+      animTimer = null;
+      document.getElementById('playBtn').style.display = '';
+      document.getElementById('stopBtn').style.display = 'none';
+    }
+
+    // ---------------- 미니맵 (게이트웨이 기준 15m 반경, 상태 색상) ----------------
+    let miniMapImg = null;
+    document.getElementById('imgInput').addEventListener('change', function(e){
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        miniMapImg = new window.Image();
+        miniMapImg.onload = () => drawMiniMap();
+        miniMapImg.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function drawMiniMap(rows=[], beaconStatus={}) {
+      const canvas = document.getElementById('miniMapCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      if (miniMapImg) {
+        ctx.drawImage(miniMapImg,0,0,canvas.width,canvas.height);
+      } else {
+        ctx.fillStyle="#f5f5f5"; ctx.fillRect(0,0,canvas.width,canvas.height);
+      }
+      ctx.strokeStyle="#bbb";
+      for(let i=0;i<=15;i++){
+        ctx.beginPath();
+        ctx.moveTo(0,i*canvas.height/15); ctx.lineTo(canvas.width,i*canvas.height/15);
+        ctx.moveTo(i*canvas.width/15,0); ctx.lineTo(i*canvas.width/15,canvas.height);
+        ctx.stroke();
+      }
+      if (!rows || !rows.length) return;
+      const gw = rows.find(d=>d.unit==="GPS"||d.unit==="게이트웨이");
+      if (!gw) return;
+      const gwLon = gw.lon, gwLat = gw.lat;
+      const oneDegLat = 111_000;
+      const oneDegLon = 111_000 * Math.cos(gwLat * Math.PI/180);
+
+      rows.forEach(d=>{
+        if (d.unit==="GPS"||d.unit==="게이트웨이") {
+          const x = canvas.width/2, y = canvas.height/2;
+          ctx.beginPath();
+          ctx.moveTo(x, y-18);
+          ctx.lineTo(x-15, y+14);
+          ctx.lineTo(x+15, y+14);
+          ctx.closePath();
+          ctx.fillStyle = "#ff9800";
+          ctx.fill();
+          ctx.strokeStyle = "#fff";
+          ctx.stroke();
+          ctx.fillStyle = "#fff";
+          ctx.font = "bold 14px sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(d.device_id, x, y-24);
+        } else if (d.unit==="BLE"||d.unit==="비콘") {
+          const dx = (d.lon - gwLon)*oneDegLon;
+          const dy = (d.lat - gwLat)*oneDegLat;
+          if (Math.abs(dx) > 15 || Math.abs(dy) > 15) return;
+          const x = canvas.width/2 + (dx/30)*canvas.width;
+          const y = canvas.height/2 - (dy/30)*canvas.height;
+          let color = "#1976d2";
+          if (beaconStatus[d.device_id]) color = beaconStatus[d.device_id].color;
+          ctx.beginPath();
+          ctx.arc(x, y, 16, 0, 2*Math.PI);
+          ctx.fillStyle = color;
+          ctx.globalAlpha = 0.8;
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+          ctx.fillStyle = "#fff";
+          ctx.font = "bold 14px sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(d.device_id, x, y-20);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
